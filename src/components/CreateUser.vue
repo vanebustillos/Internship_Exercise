@@ -55,7 +55,7 @@
             class="ma-2"
             outlined
             color="#4682B4"
-            @click.stop="cancelRegister()"
+            @click.stop="_cancelRegister()"
             >Cancel</v-btn
           >
           <v-btn
@@ -95,19 +95,19 @@ export default {
     ...mapActions(["registerUser"]),
     _registerUser() {
       this.registerParticipant({
-            name: this.name,
-            nickName: this.nickName,
-            avatar_url: this.avatar_url,
-            github_url: this.github_url,
-        });
-      }
-    },
-    cancelRegister() {
-      this.selectedParticipant = null;
-      this.dialogRegister = false;
-    },
-    openRegister() {
-      this.dialogRegister = true;
+        name: this.name,
+        nickName: this.nickName,
+        avatar_url: this.avatar_url,
+        github_url: this.github_url
+      });
     }
+  },
+  _cancelRegister() {
+    this.selectedParticipant = null;
+    this.dialogRegister = false;
+  },
+  _openRegister() {
+    this.dialogRegister = true;
+  }
 };
 </script>
