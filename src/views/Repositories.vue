@@ -1,12 +1,20 @@
 <template>
   <div class="repositories">
-    <h1>This is the Repositories page</h1>
     <v-container class="my-10" grid-list-md>
         <v-col class="mb-5" cols="12">
-            <h1 class="headline font-weight-bold mb-3">
-            Repositories list
+            <h1 id="repositoriesTitle" class="headline font-weight-bold mb-3">
+            REPOSITORIES 
             </h1>
-            <v-layout row wrap>
+            <v-btn
+                id="register"
+                dark
+                color="#D2691E"
+                @click.stop="openRegisterUserDialog()"
+            >REGISTER
+                <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-divider class="mx-4 my-4"></v-divider>
+            <v-layout id="repositoriesList" row wrap>
                 <v-flex
                 xs12
                 sm6
@@ -16,8 +24,7 @@
                 :key="index"
                 >
                     <v-card
-                        :loading="loading"
-                        class="ma-4" max-width="250"
+                        class="ma-3"
                     >
                         <v-img
                             v-if="user.avatar_url"
@@ -28,7 +35,7 @@
                             src="https://bit.ly/3jD92S0"
                         ></v-img>
 
-                        <v-card-title>
+                        <v-card-title class="userName">
                             <div class="text-center">
                                 <h4>{{ user.name }}</h4>
                             </div>
@@ -79,16 +86,24 @@
             </v-layout>
       </v-col>
     </v-container>
+    <create-user-component ref="userDialogs" />
   </div>
 </template>
 
 <script>
-import userData from "./data.json";
+import userData from "../data.json";
+import CreateUserComponent from "../components/CreateUser.vue";
 
 export default {
   name: "Repositories",
-
-  components: {  },
+  data() {
+    return {
+      registerForm: false
+    };
+  },
+  components: { 
+      CreateUserComponent
+   },
 
   computed: {
       users() {
@@ -96,6 +111,11 @@ export default {
               return item;
           })
       }
+  },
+  methods: {
+    openRegisterUserDialog() {
+      this.$refs.userDialogs._openRegister();
+    }
   }
 };
 </script>

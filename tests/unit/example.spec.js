@@ -1,13 +1,90 @@
-import { expect } from "chai";
-import { shallowMount } from "@vue/test-utils";
-import HelloWorld from "@/components/HelloWorld.vue";
+import { assert } from "chai";
+import { mount, shallowMount, createLocalVue } from "@vue/test-utils";
+import Repositories from "@/views/Repositories.vue";
+import { mockUsers } from "./mockUsers";
+import actions from "@/store/actions";
+import mutations from "@/store/mutations";
+import getters from "@/store/getters";
+/**
+ * Import Vuex pluggins
+ **/
+import VueRouter from "vue-router";
+import Vuex from "vuex";
+import Vuetify from "vuetify";
 
-describe("HelloWorld.vue", () => {
-  it("renders props.msg when passed", () => {
-    const msg = "new message";
-    const wrapper = shallowMount(HelloWorld, {
-      propsData: { msg }
+describe("Repositories module", () => {
+  let localVue;
+  let router;
+  let store;
+
+  beforeEach(() => {
+    localVue = createLocalVue();
+    localVue.use(VueRouter);
+    localVue.use(Vuex);
+    localVue.use(Vuetify);
+    router = new VueRouter({ routes: [] });
+    store = new Vuex.Store({
+      state: mockUsers,
+      actions,
+      mutations,
+      getters,
+      modules: {}
     });
-    expect(wrapper.text()).to.include(msg);
+  });
+
+  // Testing basic UI
+  it("The title should be rendered", () => {
+    const expectedTitle = "REPOSITORIES";
+    const wrapper = shallowMount(Repositories, {
+      store,
+      localVue
+    });
+
+    const titleInComponent = wrapper.find("#repositoriesTitle");
+
+    assert.equal(titleInComponent.text(), expectedTitle);
+  });
+
+  it("It should be 5 users.", () => {
+    const expectedLenght = 5;
+    const wrapper = shallowMount(Repositories, {
+      store,
+      localVue
+    });
+
+    const titleInComponent = wrapper.findAll(".userName");
+
+    assert.isTrue(wrapper.exists());
+    assert.equal(titleInComponent.length, expectedLenght);
+  });
+
+  // Testing Business Logic
+  it("Logic for Repositories should works properly", () => {
+    const wrapper = mount(Repositories, {
+      router,
+      store,
+      localVue
+    });
+    let expectedInitialLength = 5;
+    //let users = wrapper.vm.$store.state.users;
+    assert.isTrue(wrapper.exists());
+    assert.equal(wrapper.vm.$store.state.users.length, expectedInitialLength);
+  });
+
+  it("Register a new user works correctly.", () => {
+    const wrapper = mount(Repositories, {
+      store,
+      localVue
+    });
+    const initialLength = wrapper.vm.$store.state.users.length;
+    const expectedLength = initialLength + 1;
+
+    wrapper.vm.$data.name = "Visual Studio Code";
+    wrapper.vm.$data.nickName = "VSC";
+    wrapper.vm.$data.avatar_url= "https://upload.wikimedia.org/Visual_Studio_Code_1.35_icon.svg.png";
+    wrapper.vm.$data.github_url = "https://upload.wikimedia.org/Visual_Studio_Code_1.35_icon.svg.png";
+    wrapper.vm._registerUser();
+    
+    assert.equal(wrapper.vm.$store.state.users.length, expectedLength);
   });
 });
